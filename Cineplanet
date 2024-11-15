@@ -1,46 +1,60 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class DataCineplanet {
-    // Listas para los datos del cine
-    static ArrayList<String> lugares = new ArrayList<>();
-    static ArrayList<String> peliculas = new ArrayList<>();
-    static ArrayList<String> horarios = new ArrayList<>();
-    static ArrayList<String> dulces = new ArrayList<>();
-    static ArrayList<String> canchitas = new ArrayList<>();
+// Clase para representar una película con nombre y precio
+class Pelicula {
+    String nombre;
+    double precio;
 
-    // Método para inicializar los datos
+    public Pelicula(String nombre, double precio) {
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+}
+
+// Clase para representar una canchita con nombre y precio
+class Canchita {
+    String nombre;
+    double precio;
+
+    public Canchita(String nombre, double precio) {
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+}
+
+class DataCineplanet {
+    static ArrayList<String> lugares = new ArrayList<>();
+    static ArrayList<Pelicula> peliculas = new ArrayList<>();
+    static ArrayList<String> horarios = new ArrayList<>();
+    static ArrayList<Canchita> canchitas = new ArrayList<>();
+
     public static void inicializarDatos() {
         // Lugares
         lugares.add("Lima");
         lugares.add("Piura");
         lugares.add("Cusco");
 
-        // Películas
-        peliculas.add("Spider-Man: Across the Spider-Verse");
-        peliculas.add("Avatar: The Way of Water");
-        peliculas.add("Doctor Strange: Multiverse of Madness");
+        // Películas con precios
+        peliculas.add(new Pelicula("Spider-Man: Across the Spider-Verse", 25.0));
+        peliculas.add(new Pelicula("Avatar: The Way of Water", 30.0));
+        peliculas.add(new Pelicula("Doctor Strange: Multiverse of Madness", 28.0));
 
         // Horarios
         horarios.add("3:00 PM");
         horarios.add("6:00 PM");
         horarios.add("9:00 PM");
 
-        // Dulces
-        dulces.add("Canchita");
-        dulces.add("Gaseosa");
-
-        // Tipos de canchita
-        canchitas.add("Mantequilla");
-        canchitas.add("Dulce");
-        canchitas.add("Salada");
+        // Tipos de canchita con precios
+        canchitas.add(new Canchita("Mantequilla", 10.0));
+        canchitas.add(new Canchita("Dulce", 12.0));
+        canchitas.add(new Canchita("Salada", 8.0));
     }
 }
 
 public class Cineplanet {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        // Inicializar datos
         DataCineplanet.inicializarDatos();
 
         // Selección de lugar
@@ -52,12 +66,14 @@ public class Cineplanet {
         int lugarSeleccionado = scanner.nextInt();
 
         // Selección de película
-        System.out.println("\nPelículas disponibles:");
+        System.out.println("\nPelículas disponibles (con precios):");
         for (int i = 0; i < DataCineplanet.peliculas.size(); i++) {
-            System.out.println((i + 1) + ". " + DataCineplanet.peliculas.get(i));
+            Pelicula pelicula = DataCineplanet.peliculas.get(i);
+            System.out.println((i + 1) + ". " + pelicula.nombre + " - S/" + pelicula.precio);
         }
         System.out.print("Seleccione una película: ");
         int peliculaSeleccionada = scanner.nextInt();
+        Pelicula peliculaElegida = DataCineplanet.peliculas.get(peliculaSeleccionada - 1);
 
         // Selección de horario
         System.out.println("\nHorarios disponibles:");
@@ -70,12 +86,25 @@ public class Cineplanet {
         // Selección de asientos y precios
         System.out.print("\n¿Cuántos asientos desea?: ");
         int cantidadAsientos = scanner.nextInt();
-
-        int precioGeneral = 20; // Precio adulto
-        double precioReducido = precioGeneral / 2.0; // Precio reducido para niños y socios
-        double total = 0;
+        double totalBoletos = 0;
 
         ArrayList<String> asientosSeleccionados = new ArrayList<>();
+        System.out.println("\nMapa de Asientos:");
+        System.out.println("""
+                	1  2  3  4  5  6  7  8  9  10 11 12 	13 14 15
+                
+                A   ○  ○  ○  ○  ●  ○  ○  ○  ○  ○  ○  ○
+                B	○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○
+                C	○  ●  ●  ○  ○  ○  ○  ○  ○  ○  ○  ○
+                D	○  ○  ○  ○  ○  ●  ○  ○  ○  ○  ○  ○
+                E	○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○
+                F	○  ●  ●  ○  ○  ○  ○  ○  ○  ○  ●  ○
+                G	○  ○  ○  ○  ○  ○  ●  ○  ○  ○  ○  ○
+                H	○  ○  ○  ○  ●  ○  ○  ○  ○  ○  ○  ○
+                I	○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○     	○  ●  ●
+                J	○  ○  ○  ○  ○  ○  ●  ○  ○  ○  ○  ○		●  ○  ○
+                """);
+
         for (int i = 0; i < cantidadAsientos; i++) {
             System.out.println("\nUsuario " + (i + 1));
             System.out.print("Seleccione el tipo de usuario (1. Adulto, 2. Niño, 3. Socio): ");
@@ -83,15 +112,15 @@ public class Cineplanet {
 
             switch (tipoUsuario) {
                 case 1:
-                    total += precioGeneral;
+                    totalBoletos += peliculaElegida.precio; // Adulto paga el precio completo
                     break;
                 case 2:
                 case 3:
-                    total += precioReducido;
+                    totalBoletos += peliculaElegida.precio / 2; // Niños y socios pagan la mitad
                     break;
                 default:
                     System.out.println("Tipo de usuario inválido. Se cobrará como adulto.");
-                    total += precioGeneral;
+                    totalBoletos += peliculaElegida.precio;
             }
 
             System.out.print("Seleccione su asiento (Ejemplo: A1, B3): ");
@@ -100,43 +129,51 @@ public class Cineplanet {
 
         // Sección de dulces
         System.out.println("\nSección de dulces. Tenemos promoción:");
-        for (int i = 0; i < DataCineplanet.dulces.size(); i++) {
-            System.out.println((i + 1) + ". " + DataCineplanet.dulces.get(i));
+        for (int i = 0; i < DataCineplanet.canchitas.size(); i++) {
+            Canchita canchita = DataCineplanet.canchitas.get(i);
+            System.out.println((i + 1) + ". " + canchita.nombre + " - S/" + canchita.precio);
         }
-        System.out.print("Seleccione una opción: ");
-        int dulceSeleccionado = scanner.nextInt();
+        System.out.print("Seleccione un tipo de canchita: ");
+        int canchitaSeleccionada = scanner.nextInt();
+        System.out.print("¿Cuántas canchitas desea?: ");
+        int cantidadCanchitas = scanner.nextInt();
 
-        ArrayList<String> dulcesComprados = new ArrayList<>();
-        if (dulceSeleccionado == 1) {
-            System.out.println("\nTipos de Canchita:");
-            for (int i = 0; i < DataCineplanet.canchitas.size(); i++) {
-                System.out.println((i + 1) + ". " + DataCineplanet.canchitas.get(i));
-            }
-            System.out.print("Seleccione un tipo de canchita: ");
-            int canchitaSeleccionada = scanner.nextInt();
-            System.out.print("¿Cuántas canchitas desea?: ");
-            int cantidadCanchitas = scanner.nextInt();
-            dulcesComprados.add(DataCineplanet.canchitas.get(canchitaSeleccionada - 1) + " x" + cantidadCanchitas);
-        }
+        double totalDulces = cantidadCanchitas * DataCineplanet.canchitas.get(canchitaSeleccionada - 1).precio;
 
-        // Pagar o agregar más
-        System.out.println("\n1. Pagar");
-        System.out.println("2. Agregar más dulces");
-        System.out.print("Seleccione una opción: ");
-        int accionFinal = scanner.nextInt();
+        // Llamada al método para imprimir el total
+        imprimirTotalCompras(
+            DataCineplanet.lugares.get(lugarSeleccionado - 1),
+            peliculaElegida,
+            DataCineplanet.horarios.get(horarioSeleccionado - 1),
+            asientosSeleccionados,
+            totalBoletos,
+            DataCineplanet.canchitas.get(canchitaSeleccionada - 1),
+            cantidadCanchitas,
+            totalDulces
+        );
 
-        if (accionFinal == 1) {
-            System.out.println("\n--- Recibo ---");
-            System.out.println("Lugar: " + DataCineplanet.lugares.get(lugarSeleccionado - 1));
-            System.out.println("Película: " + DataCineplanet.peliculas.get(peliculaSeleccionada - 1));
-            System.out.println("Horario: " + DataCineplanet.horarios.get(horarioSeleccionado - 1));
-            System.out.println("Asientos: " + asientosSeleccionados);
-            System.out.println("Total: S/" + total);
-            System.out.println("Dulces: " + dulcesComprados);
-            System.out.println("Gracias por su compra.");
-        } else {
-            System.out.println("Agregue más dulces y repita.");
-        }
         scanner.close();
+    }
+
+    public static void imprimirTotalCompras(
+            String lugar,
+            Pelicula pelicula,
+            String horario,
+            ArrayList<String> asientos,
+            double totalBoletos,
+            Canchita canchita,
+            int cantidadCanchitas,
+            double totalDulces
+    ) {
+        double total = totalBoletos + totalDulces;
+        System.out.println("\n--- Recibo ---");
+        System.out.println("Lugar: " + lugar);
+        System.out.println("Película: " + pelicula.nombre);
+        System.out.println("Horario: " + horario);
+        System.out.println("Asientos: " + asientos);
+        System.out.println("Total Boletos: S/" + totalBoletos);
+        System.out.println("Dulces: " + canchita.nombre + " x" + cantidadCanchitas + " - S/" + totalDulces);
+        System.out.println("Total a pagar: S/" + total);
+        System.out.println("Gracias por su compra.");
     }
 }
