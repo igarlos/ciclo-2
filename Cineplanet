@@ -1,179 +1,385 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-// Clase para representar una película con nombre y precio
-class Pelicula {
+class Producto {
     String nombre;
-    double precio;
+    double precioUnitario;
+    String butaca;
+    int cantidad;
 
-    public Pelicula(String nombre, double precio) {
+    public Producto(String nombre, double precioUnitario, String butaca, int cantidad) {
         this.nombre = nombre;
-        this.precio = precio;
+        this.precioUnitario = precioUnitario;
+        this.butaca = butaca;
+        this.cantidad = cantidad;
+    }
+
+    public double getPrecioTotal() {
+        return precioUnitario * cantidad;
     }
 }
 
-// Clase para representar una canchita con nombre y precio
-class Canchita {
-    String nombre;
-    double precio;
+public class Colbox {
 
-    public Canchita(String nombre, double precio) {
-        this.nombre = nombre;
-        this.precio = precio;
-    }
-}
+    static ArrayList<Producto> carrito = new ArrayList<>();
+    static ArrayList<String> categorias = new ArrayList<>();
+    static ArrayList<String> peliculas2d = new ArrayList<>();
+    static ArrayList<String> ciudades = new ArrayList<>();
+    static ArrayList<Producto> titanic = new ArrayList<>();
+    static ArrayList<Producto> tanos = new ArrayList<>();
+    static ArrayList<Producto> lufi = new ArrayList<>();
+    static String[][] mapaButaca = new String[10][15];
+    static ArrayList<Producto> combosFamiliares = new ArrayList<>();
+    static ArrayList<Producto> dulces = new ArrayList<>();
+    static ArrayList<Producto> promociones = new ArrayList<>();
 
-class DataCineplanet {
-    static ArrayList<String> lugares = new ArrayList<>();
-    static ArrayList<Pelicula> peliculas = new ArrayList<>();
-    static ArrayList<String> horarios = new ArrayList<>();
-    static ArrayList<Canchita> canchitas = new ArrayList<>();
+    static Scanner chuqui = new Scanner(System.in);
 
-    public static void inicializarDatos() {
-        // Lugares
-        lugares.add("Lima");
-        lugares.add("Piura");
-        lugares.add("Cusco");
-
-        // Películas con precios
-        peliculas.add(new Pelicula("Spider-Man: Across the Spider-Verse", 25.0));
-        peliculas.add(new Pelicula("Avatar: The Way of Water", 30.0));
-        peliculas.add(new Pelicula("Doctor Strange: Multiverse of Madness", 28.0));
-
-        // Horarios
-        horarios.add("3:00 PM");
-        horarios.add("6:00 PM");
-        horarios.add("9:00 PM");
-
-        // Tipos de canchita con precios
-        canchitas.add(new Canchita("Mantequilla", 10.0));
-        canchitas.add(new Canchita("Dulce", 12.0));
-        canchitas.add(new Canchita("Salada", 8.0));
-    }
-}
-
-public class Cineplanet {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        DataCineplanet.inicializarDatos();
+        inicializarMapaButacas();
 
-        // Selección de lugar
-        System.out.println("Bienvenido a Cineplanet. Seleccione una ubicación:");
-        for (int i = 0; i < DataCineplanet.lugares.size(); i++) {
-            System.out.println((i + 1) + ". " + DataCineplanet.lugares.get(i));
-        }
-        System.out.print("Ingrese el número de la ubicación: ");
-        int lugarSeleccionado = scanner.nextInt();
+        ciudades.add("Lima");
+        ciudades.add("Arequipa");
+        ciudades.add("Cusco");
+        ciudades.add("Puno");
+        ciudades.add("Huancavelica");
+        ciudades.add("Moquegua");
 
-        // Selección de película
-        System.out.println("\nPelículas disponibles (con precios):");
-        for (int i = 0; i < DataCineplanet.peliculas.size(); i++) {
-            Pelicula pelicula = DataCineplanet.peliculas.get(i);
-            System.out.println((i + 1) + ". " + pelicula.nombre + " - S/" + pelicula.precio);
-        }
-        System.out.print("Seleccione una película: ");
-        int peliculaSeleccionada = scanner.nextInt();
-        Pelicula peliculaElegida = DataCineplanet.peliculas.get(peliculaSeleccionada - 1);
+        categorias.add("Peliculas 2D");
+        categorias.add("Peliculas 3D");
+        categorias.add("Peliculas Premium");
 
-        // Selección de horario
-        System.out.println("\nHorarios disponibles:");
-        for (int i = 0; i < DataCineplanet.horarios.size(); i++) {
-            System.out.println((i + 1) + ". " + DataCineplanet.horarios.get(i));
-        }
-        System.out.print("Seleccione un horario: ");
-        int horarioSeleccionado = scanner.nextInt();
+        peliculas2d.add("Titanic");
+        titanic.add(new Producto("Titanic Niño", 6, "", 0));
+        titanic.add(new Producto("Titanic Adulto", 10, "", 0));
 
-        // Selección de asientos y precios
-        System.out.print("\n¿Cuántos asientos desea?: ");
-        int cantidadAsientos = scanner.nextInt();
-        double totalBoletos = 0;
+        peliculas2d.add("Thanos");
+        tanos.add(new Producto("Thanos Niño", 6, "", 0));
+        tanos.add(new Producto("Thanos Adulto", 10, "", 0));
 
-        ArrayList<String> asientosSeleccionados = new ArrayList<>();
-        System.out.println("\nMapa de Asientos:");
+        peliculas2d.add("Lufi");
+        lufi.add(new Producto("Lufi Niño", 6, "", 0));
+        lufi.add(new Producto("Lufi Adulto", 10, "", 0));
+
+        combosFamiliares.add(new Producto("Combo Familiar - Promo 1", 12.00, "1 Popcorn Grande + 2 Refrescos", 1));
+        combosFamiliares.add(new Producto("Combo Familiar - Promo 2", 15.00, "1 Popcorn Grande + 2 Refrescos + 1 Dulce", 1));
+        combosFamiliares.add(new Producto("Combo Familiar - Promo 3", 18.00, "2 Popcorn Grandes + 2 Refrescos + 2 Dulces", 1));
+
+        // Dulces
+        dulces.add(new Producto("Galletas", 5.00, "", 1));
+        dulces.add(new Producto("Caramelos", 3.00, "", 1));
+        dulces.add(new Producto("Chocolate", 7.00, "", 1));
+
+        // Promociones
+        promociones.add(new Producto("Promo - Cancha más Inka", 12.00, "", 1));
+        promociones.add(new Producto("Promo - Cancha Familiar", 15.00, "", 1));
+        promociones.add(new Producto("Promo - Cancha más Hotdog y Gaseosa Familiar", 25.00, "", 1));
+
         System.out.println("""
-                	1  2  3  4  5  6  7  8  9  10 11 12 	13 14 15
-                
-                A   ○  ○  ○  ○  ●  ○  ○  ○  ○  ○  ○  ○
-                B	○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○
-                C	○  ●  ●  ○  ○  ○  ○  ○  ○  ○  ○  ○
-                D	○  ○  ○  ○  ○  ●  ○  ○  ○  ○  ○  ○
-                E	○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○
-                F	○  ●  ●  ○  ○  ○  ○  ○  ○  ○  ●  ○
-                G	○  ○  ○  ○  ○  ○  ●  ○  ○  ○  ○  ○
-                H	○  ○  ○  ○  ●  ○  ○  ○  ○  ○  ○  ○
-                I	○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○  ○     	○  ●  ●
-                J	○  ○  ○  ○  ○  ○  ●  ○  ○  ○  ○  ○		●  ○  ○
-                """);
+            🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞
+            🎞🎞                       Bienvenido a  "CinePlanet"                      🎞🎞
+            🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞🎞
+            """);
+
+        ciudadesPelicula();
+    }
+
+    public static void ciudadesPelicula() {
+        System.out.println("        ====================================================");
+        System.out.println("Elija su ciudad:");
+
+        for (int i = 0; i < ciudades.size(); i++) {
+            System.out.println((i + 1) + ". " + ciudades.get(i));
+        }
+        System.out.println((ciudades.size() + 1) + ". Salir");
+
+        int accion = pedirOpcion(ciudades.size() + 1);
+
+        if (accion == ciudades.size() + 1) {
+            System.out.println("====== ¡Vuelva pronto! ======");
+            System.exit(0);
+        } else {
+            tipoDePelicula();
+        }
+    }
+
+    public static void tipoDePelicula() {
+        System.out.println("\nPelículas");
+        System.out.println("Seleccione una película:");
+        for (int i = 0; i < categorias.size(); i++) {
+            System.out.println((i + 1) + ". " + categorias.get(i));
+        }
+        System.out.println((categorias.size() + 1) + ". Regresar");
+
+        int opcion = pedirOpcion(categorias.size() + 1);
+
+        if (opcion == categorias.size() + 1) {
+            ciudadesPelicula();
+        } else if (opcion == 1) {
+            peliculas2D();
+        } else if (opcion == 2) {
+            // Implementar la opción para películas 3D más tarde
+        } else if (opcion == 3) {
+            // Implementar la opción para películas Premium más tarde
+        }
+    }
+
+    public static void peliculas2D() {
+        System.out.println("\n----------------------------------- Películas 2D -----------------------------------");
+        System.out.println("Seleccione una película:");
+
+        for (int i = 0; i < peliculas2d.size(); i++) {
+            System.out.println((i + 1) + ". " + peliculas2d.get(i));
+        }
+        System.out.println(peliculas2d.size() + 1 + ". Regresar");
+
+        int opcion = pedirOpcion(peliculas2d.size() + 1);
+
+        if (opcion == peliculas2d.size() + 1) {
+            tipoDePelicula();
+        } else {
+            manejarSubcategoriaAudio(opcion);
+        }
+    }
+
+    public static void manejarSubcategoriaAudio(int opcion) {
+        if (opcion == 1) {
+            System.out.println("Tenemos los siguientes precios para Titanic:");
+            System.out.println("=====================================================");
+            seleccionarPersona("Titanic");
+        } else if (opcion == 2) {
+            System.out.println("Tenemos los siguientes precios para Thanos:");
+            System.out.println("=====================================================");
+            seleccionarPersona("Thanos");
+        } else if (opcion == 3) {
+            System.out.println("Tenemos los siguientes precios para Lufi:");
+            System.out.println("=====================================================");
+            seleccionarPersona("Lufi");
+        }
+    }
+
+    public static void seleccionarPersona(String pelicula) {
+        System.out.println("\nElija el tipo de persona:");
+        System.out.println("1. Niño (50% de descuento)");
+        System.out.println("2. Adulto (Precio completo)");
+        System.out.println("3. Socio (Descuento de 10 soles)");
+
+        int tipo = pedirOpcion(3);
+        double precio = 0;
+        double precioFinal = 0;
+
+        if (pelicula.equals("Titanic")) {
+            precio = 10;
+        } else if (pelicula.equals("Thanos")) {
+            precio = 10;
+        } else if (pelicula.equals("Lufi")) {
+            precio = 10;
+        }
+
+        if (tipo == 1) {
+            precioFinal = precio / 2;
+        } else if (tipo == 2) {
+            precioFinal = precio;
+        } else if (tipo == 3) {
+            precioFinal = precio - 10;
+        }
+
+        System.out.println("¿Cuántos asientos desea reservar?");
+        int cantidadAsientos = pedirOpcion(15);
 
         for (int i = 0; i < cantidadAsientos; i++) {
-            System.out.println("\nUsuario " + (i + 1));
-            System.out.print("Seleccione el tipo de usuario (1. Adulto, 2. Niño, 3. Socio): ");
-            int tipoUsuario = scanner.nextInt();
-
-            switch (tipoUsuario) {
-                case 1:
-                    totalBoletos += peliculaElegida.precio; // Adulto paga el precio completo
-                    break;
-                case 2:
-                case 3:
-                    totalBoletos += peliculaElegida.precio / 2; // Niños y socios pagan la mitad
-                    break;
-                default:
-                    System.out.println("Tipo de usuario inválido. Se cobrará como adulto.");
-                    totalBoletos += peliculaElegida.precio;
-            }
-
-            System.out.print("Seleccione su asiento (Ejemplo: A1, B3): ");
-            asientosSeleccionados.add(scanner.next());
+            String productoSeleccionado = seleccionarButaca(pelicula);
+            carrito.add(new Producto(pelicula, precioFinal, productoSeleccionado, 1));
         }
 
-        // Sección de dulces
-        System.out.println("\nSección de dulces. Tenemos promoción:");
-        for (int i = 0; i < DataCineplanet.canchitas.size(); i++) {
-            Canchita canchita = DataCineplanet.canchitas.get(i);
-            System.out.println((i + 1) + ". " + canchita.nombre + " - S/" + canchita.precio);
+        mostrarCarrito();
+
+        System.out.println("¿Desea agregar más asientos? (1. Sí / 2. No)");
+        int respuesta = pedirOpcion(2);
+
+        if (respuesta == 1) {
+            seleccionarPersona(pelicula);  // Redirige nuevamente a la selección de tipo (Niño, Adulto, Socio)
+        } else {
+            opcionesPago();  // Procede a las opciones de pago y agregar dulces
         }
-        System.out.print("Seleccione un tipo de canchita: ");
-        int canchitaSeleccionada = scanner.nextInt();
-        System.out.print("¿Cuántas canchitas desea?: ");
-        int cantidadCanchitas = scanner.nextInt();
-
-        double totalDulces = cantidadCanchitas * DataCineplanet.canchitas.get(canchitaSeleccionada - 1).precio;
-
-        // Llamada al método para imprimir el total
-        imprimirTotalCompras(
-            DataCineplanet.lugares.get(lugarSeleccionado - 1),
-            peliculaElegida,
-            DataCineplanet.horarios.get(horarioSeleccionado - 1),
-            asientosSeleccionados,
-            totalBoletos,
-            DataCineplanet.canchitas.get(canchitaSeleccionada - 1),
-            cantidadCanchitas,
-            totalDulces
-        );
-
-        scanner.close();
     }
 
-    public static void imprimirTotalCompras(
-            String lugar,
-            Pelicula pelicula,
-            String horario,
-            ArrayList<String> asientos,
-            double totalBoletos,
-            Canchita canchita,
-            int cantidadCanchitas,
-            double totalDulces
-    ) {
-        double total = totalBoletos + totalDulces;
-        System.out.println("\n--- Recibo ---");
-        System.out.println("Lugar: " + lugar);
-        System.out.println("Película: " + pelicula.nombre);
-        System.out.println("Horario: " + horario);
-        System.out.println("Asientos: " + asientos);
-        System.out.println("Total Boletos: S/" + totalBoletos);
-        System.out.println("Dulces: " + canchita.nombre + " x" + cantidadCanchitas + " - S/" + totalDulces);
-        System.out.println("Total a pagar: S/" + total);
-        System.out.println("Gracias por su compra.");
+    public static String seleccionarButaca(String producto) {
+        mostrarMapaButacas();
+        System.out.println("\nSeleccione una butaca para " + producto + ":");
+        Scanner scanner = new Scanner(System.in);
+        String butacaSeleccionada;
+
+        while (true) {
+            System.out.print("Ingrese el asiento (Ejemplo: A1, B3): ");
+            butacaSeleccionada = scanner.next().toUpperCase();
+            if (validarButaca(butacaSeleccionada)) {
+                marcarButacaComoOcupada(butacaSeleccionada);
+                break;
+            } else {
+                System.out.println("La butaca no está disponible o es inválida. Intente de nuevo.");
+            }
+        }
+        return butacaSeleccionada;
+    }
+
+    public static boolean validarButaca(String butaca) {
+        if (butaca.length() < 2) return false;
+        char fila = butaca.charAt(0);
+        int columna = Integer.parseInt(butaca.substring(1)) - 1;
+
+        if (fila < 'A' || fila > 'J' || columna < 0 || columna > 14) {
+            return false;
+        }
+
+        int filaIndex = fila - 'A';
+        return mapaButaca[filaIndex][columna].equals("○");
+    }
+
+    public static void marcarButacaComoOcupada(String butaca) {
+        char fila = butaca.charAt(0);
+        int columna = Integer.parseInt(butaca.substring(1)) - 1;
+
+        int filaIndex = fila - 'A';
+        mapaButaca[filaIndex][columna] = "X";
+
+        mostrarMapaButacas();
+    }
+
+    public static void mostrarMapaButacas() {
+        System.out.println("\nMapa de Butacas:");
+        System.out.println("     1  2  3  4  5  6  7  8  9 10 11 12 13 14 15");
+        for (int i = 0; i < mapaButaca.length; i++) {
+            System.out.print((char) ('A' + i) + "   ");
+            for (int j = 0; j < mapaButaca[i].length; j++) {
+                System.out.print(mapaButaca[i][j] + "  ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static int pedirOpcion(int maxOpcion) {
+        int opcion;
+        while (true) {
+            try {
+                opcion = Integer.parseInt(chuqui.nextLine());
+                if (opcion < 1 || opcion > maxOpcion) {
+                    System.out.println("Opción inválida, intente nuevamente.");
+                } else {
+                    break;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor ingrese un número válido.");
+            }
+        }
+        return opcion;
+    }
+
+    public static void opcionesPago() {
+        System.out.println("¿Desea proceder con el pago?");
+        System.out.println("1. Sí, proceder con el pago.");
+        System.out.println("2. Agregar dulces.");
+
+        int opcion = pedirOpcion(2);
+        if (opcion == 1) {
+            procesarPago();
+        } else {
+            agregarDulces();
+        }
+    }
+
+    public static void procesarPago() {
+        double total = 0;
+        for (Producto producto : carrito) {
+            total += producto.getPrecioTotal();
+        }
+        System.out.println("Total a pagar: S/ " + total);
+        System.out.println("Pago realizado con éxito. ¡Gracias por su compra!");
+    }
+
+    public static void agregarDulces() {
+        System.out.println("Elija el tipo de combo que desea agregar:");
+        System.out.println("1. Promo");
+        System.out.println("2. Familiar");
+        System.out.println("3. Mixto");
+        System.out.println("4. Regresar");
+
+        int opcionCombo = pedirOpcion(4);
+
+        switch (opcionCombo) {
+            case 1:
+                //agregarPromo();
+                break;
+            case 2:
+                agregarComboFamiliar();
+                break;
+            case 3:
+                //agregarMixto();
+                break;
+            case 4:
+                //1opcionesDulces(); // Regresar al menú de dulces
+                break;
+            default:
+                System.out.println("intenta nuevamente");
+                agregarDulces();
+                break;
+        }
+    }
+    public static void agregarComboFamiliar() {
+        System.out.println("\nElija un Combo Familiar:");
+        for (int i = 0; i < combosFamiliares.size(); i++) {
+            Producto combo = combosFamiliares.get(i);
+            System.out.println((i + 1) + ". " + combo.nombre + " - S/ " + combo.precioUnitario + " (" + combo.butaca + ")");
+        }
+        System.out.println((combosFamiliares.size() + 1) + ". Regresar");
+
+        int opcion = pedirOpcion(combosFamiliares.size() + 1);
+
+        if (opcion == combosFamiliares.size() + 1) {
+            //opcionesDulces(); // Regresar
+        } else {
+            Producto comboSeleccionado = combosFamiliares.get(opcion - 1);
+            System.out.println("¿Cuántos " + comboSeleccionado.nombre + " desea?");
+            int cantidad = pedirCantidad();
+            carrito.add(new Producto(comboSeleccionado.nombre, comboSeleccionado.precioUnitario, comboSeleccionado.butaca, cantidad));
+            System.out.println(cantidad + " " + comboSeleccionado.nombre + " agregados a su carrito.");
+            mostrarCarrito();
+            //opcionesDulces(); // Regresar al menú de dulces
+        }
+    }
+    public static int pedirCantidad() {
+        int cantidad;
+        while (true) {
+            try {
+                System.out.println("Ingrese la cantidad:");
+                cantidad = Integer.parseInt(chuqui.nextLine());
+                if (cantidad <= 0) {
+                    System.out.println("Por favor ingrese una cantidad válida.");
+                } else {
+                    return cantidad;
+                }
+            } catch (Exception e) {
+                System.out.println("Por favor ingrese un número válido.");
+            }
+        }
+    }
+
+
+    public static void inicializarMapaButacas() {
+        for (int i = 0; i < mapaButaca.length; i++) {
+            for (int j = 0; j < mapaButaca[i].length; j++) {
+                mapaButaca[i][j] = "○"; 
+            }
+        }
+    }
+
+    public static void mostrarCarrito() {
+        System.out.println("\nCarrito de compras:");
+        double total = 0;
+        for (Producto producto : carrito) {
+            System.out.println(producto.nombre + " - " + producto.butaca + " - S/ " + producto.getPrecioTotal());
+            total += producto.getPrecioTotal();
+        }
+        System.out.println("Total: S/ " + total);
     }
 }
