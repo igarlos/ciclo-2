@@ -65,12 +65,12 @@ public class Colbox {
         combosFamiliares.add(new Producto("Combo Familiar - Promo 2", 15.00, "1 Popcorn Grande + 2 Refrescos + 1 Dulce", 1));
         combosFamiliares.add(new Producto("Combo Familiar - Promo 3", 18.00, "2 Popcorn Grandes + 2 Refrescos + 2 Dulces", 1));
 
-        // Dulces
+
         dulces.add(new Producto("Galletas", 5.00, "", 1));
         dulces.add(new Producto("Caramelos", 3.00, "", 1));
         dulces.add(new Producto("Chocolate", 7.00, "", 1));
 
-        // Promociones
+        
         promociones.add(new Producto("Promo - Cancha más Inka", 12.00, "", 1));
         promociones.add(new Producto("Promo - Cancha Familiar", 15.00, "", 1));
         promociones.add(new Producto("Promo - Cancha más Hotdog y Gaseosa Familiar", 25.00, "", 1));
@@ -118,9 +118,9 @@ public class Colbox {
         } else if (opcion == 1) {
             peliculas2D();
         } else if (opcion == 2) {
-            // Implementar la opción para películas 3D más tarde
+            
         } else if (opcion == 3) {
-            // Implementar la opción para películas Premium más tarde
+            
         }
     }
 
@@ -198,9 +198,9 @@ public class Colbox {
         int respuesta = pedirOpcion(2);
 
         if (respuesta == 1) {
-            seleccionarPersona(pelicula);  // Redirige nuevamente a la selección de tipo (Niño, Adulto, Socio)
+            seleccionarPersona(pelicula); 
         } else {
-            opcionesPago();  // Procede a las opciones de pago y agregar dulces
+            opcionesPago();  
         }
     }
 
@@ -308,16 +308,16 @@ public class Colbox {
 
         switch (opcionCombo) {
             case 1:
-                //agregarPromo();
+                
                 break;
             case 2:
                 agregarComboFamiliar();
                 break;
             case 3:
-                //agregarMixto();
+               
                 break;
             case 4:
-                //1opcionesDulces(); // Regresar al menú de dulces
+               
                 break;
             default:
                 System.out.println("intenta nuevamente");
@@ -336,7 +336,7 @@ public class Colbox {
         int opcion = pedirOpcion(combosFamiliares.size() + 1);
 
         if (opcion == combosFamiliares.size() + 1) {
-            //opcionesDulces(); // Regresar
+            
         } else {
             Producto comboSeleccionado = combosFamiliares.get(opcion - 1);
             System.out.println("¿Cuántos " + comboSeleccionado.nombre + " desea?");
@@ -344,7 +344,7 @@ public class Colbox {
             carrito.add(new Producto(comboSeleccionado.nombre, comboSeleccionado.precioUnitario, comboSeleccionado.butaca, cantidad));
             System.out.println(cantidad + " " + comboSeleccionado.nombre + " agregados a su carrito.");
             mostrarCarrito();
-            //opcionesDulces(); // Regresar al menú de dulces
+            
         }
     }
     public static int pedirCantidad() {
