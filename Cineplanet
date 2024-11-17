@@ -478,7 +478,7 @@ public class Colbox {
     public static void seleccionarMetodoPago(Scanner sc, String correo, String nombre1, String telefono) {
         boolean pagoCompletado = false;
 
-       
+
         while (!pagoCompletado) {
             System.out.println("\n====================================");
             System.out.println("⚡  Selecciona tu método de pago ⚡");
@@ -489,17 +489,17 @@ public class Colbox {
             System.out.print("Elige una opción (1 o 2): ");
 
             int metodoPago = sc.nextInt();
-            sc.nextLine();  
+            sc.nextLine();
 
-            
+
             switch (metodoPago) {
                 case 1:
-                    procesarPagoConTarjeta(sc, telefono); 
+                    procesarPagoConTarjeta(sc, telefono);
                     pagoCompletado = true;
                     break;
 
                 case 2:
-                    procesarPagoEnEfectivo(sc, telefono); 
+                    procesarPagoEnEfectivo(sc, telefono);
                     break;
 
                 default:
@@ -531,11 +531,11 @@ public class Colbox {
         }
         sc.nextLine();
 
-    
+
         System.out.print("👤 Nombre en la tarjeta: ");
         String titular = sc.nextLine();
 
-    
+
         String fecha;
         while (true) {
             System.out.print("📅 Fecha de vencimiento (MM/AA): ");
@@ -546,7 +546,7 @@ public class Colbox {
             System.out.println("❌ Error: La fecha de vencimiento debe estar en formato MM/AA.");
         }
 
-    
+
         int cvv;
         while (true) {
             System.out.print("🔒 CVV (3 dígitos): ");
@@ -639,78 +639,64 @@ public class Colbox {
         String downloadFolder = Paths.get(userHome, "Downloads", "recibo_compra.txt").toString();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(downloadFolder))) {
-
-            String header = """
-                    ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-                    ||                          🌟 RECIBO DE COMPRA - COOLBOX 🌟                                      ||
-                    ───────────────────────────────────────────────────────────────────────────────────────────────────────────
-                    """;
-
-            System.out.println(header);
-            writer.write(header);
-
-          
+            writer.write("""
+                    \n__________________________________________________________________________________________________________________________
+                    ||                                                                                                                         ||
+                    """);
+            System.out.println("""
+                    \n__________________________________________________________________________________________________________________________
+                    ||                                                                                                                         ||
+                    """);
+            writer.write("\n||     --- RECIBO DE COMPRA ---");
+            System.out.println("||     --- RECIBO DE COMPRA ---");
+            for (Producto producto : carrito) {
+                System.out.println(producto.butaca);
+            }
             LocalDateTime ahora = LocalDateTime.now();
+            writer.write("\n||         Nombre del cliente: " + nombre1);
+            System.out.println("||         Nombre del cliente: " + nombre1);
+            writer.write("\n||         Correo electrónico: " + correo);
+            System.out.println("||         Correo electrónico: " + correo);
+            writer.write("\n||         Productos comprados:\n");
+            System.out.println("||         Productos comprados:\n");
+            double preciototal = 0;
+            for (Producto producto : carrito) {
+                preciototal += producto.getPrecioTotal();
+                writer.write("\n||" +producto.cantidad+" : " + producto.nombre + " | Precio total: S/. " + String.format("%.2f", producto.getPrecioTotal()) );
+                System.out.println("||" +producto.cantidad +" : "+ producto.nombre + " | Precio total: S/. " + String.format("%.2f", producto.getPrecioTotal()) );
+            }
+            double precioigv = 0.18 * preciototal;
+            double preciofinish = preciototal - precioigv;
+
+            writer.write("\n||-------------------------------------------------------------------------------------------------------------------||");
+            System.out.println("||-------------------------------------------------------------------------------------------------------------------||");
+            writer.write("\n||               COSTO del producto (sin IGV)  =  S/. " + String.format("%.2f", preciofinish));
+            System.out.println("||               COSTO del producto (sin IGV)  =  S/. " + String.format("%.2f", preciofinish));
+            writer.write("\n||               COSTO del IGV (18%)           =  S/. " + String.format("%.2f", precioigv));
+            System.out.println("||               COSTO del IGV (18%)           =  S/. " + String.format("%.2f", precioigv));
+            writer.write("\n||____________________________________________________________________________________________________________________||");
+            System.out.println("||____________________________________________________________________________________________________________________||");
+            writer.write("\n||               Total a pagar                =  S/. " + String.format("%.2f", preciototal));
+            System.out.println("||               Total a pagar                =  S/. " + String.format("%.2f", preciototal));
+            writer.write("\n||____________________________________________________________________________________________________________________||");
+            System.out.println("||____________________________________________________________________________________________________________________||");
+
+
             DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             String fecha = ahora.format(formato);
+            writer.write("                   \nrecibo generado :   " + fecha);
+            System.out.println("                      recibo generado :   " + fecha);
+            System.out.println();
+            writer.write("\n                                                 Gracias por su compra en COOLBOX!");
+            System.out.println("                                                 Gracias por su compra en COOLBOX!");
+            writer.write("\n                                    ¡Vuelva pronto!");
+            System.out.println("                                    ¡Vuelva pronto!");
+            writer.write("\n                                             FELIZ NAVIDAD 🎅🎄");
+            System.out.println("                                             FELIZ NAVIDAD 🎅🎄");
 
-          
-            writer.write("\n|| Cliente: " + nombre1);
-            writer.write("\n|| Correo: " + correo);
-            writer.write("\n──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-            System.out.println("|| Cliente: " + nombre1);
-            System.out.println("|| Correo: " + correo);
-            System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-
-        
-            writer.write("\n|| Productos comprados:");
-            System.out.println("|| Productos comprados:");
-
-            double total = 0;
-            for (Producto producto : carrito) {
-                double precioProducto = producto.getPrecioTotal();
-                total += precioProducto;
-                writer.write(String.format("\n|| %-25s | Precio: S/. %-8.2f | Color: %-10s", producto.nombre, precioProducto, producto.precioUnitario));
-                System.out.println(String.format("|| %-25s | Precio: S/. %-8.2f | Color: %-10s", producto.nombre, precioProducto, producto.precioUnitario));
-            }
-
-          
-            double precioSinIGV = total / 1.18; 
-            double precioIGV = total - precioSinIGV;
-
-            writer.write("\n──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-            System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-
-            writer.write(String.format("\n|| Costo del producto (sin IGV):  S/. %.2f", precioSinIGV));
-            writer.write(String.format("\n|| Costo del IGV (18%):           S/. %.2f", precioIGV));
-            writer.write(String.format("\n|| Total a pagar:                S/. %.2f", total));
-            System.out.println(String.format("|| Costo del producto (sin IGV):  S/. %.2f", precioSinIGV));
-            System.out.println(String.format("|| Costo del IGV (18%):           S/. %.2f", precioIGV));
-            System.out.println(String.format("|| Total a pagar:                S/. %.2f", total));
-
-            writer.write("\n──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-            System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-
-           
-            writer.write("\n|| Fecha y hora de la compra:     " + fecha);
-            System.out.println("|| Fecha y hora de la compra:     " + fecha);
-
-            
-            writer.write("\n──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-            writer.write("\n||   ¡Gracias por tu compra en COOLBOX!                                    ||");
-            writer.write("\n||         ¡Vuelve pronto!                                                  ||");
-            writer.write("\n||                🎅 FELIZ NAVIDAD 🎄                                      ||");
-            writer.write("\n──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-            System.out.println("||   ¡Gracias por tu compra en COOLBOX!                                    ||");
-            System.out.println("||         ¡Vuelve pronto!                                                  ||");
-            System.out.println("||                🎅 FELIZ NAVIDAD 🎄                                      ||");
-            System.out.println("──────────────────────────────────────────────────────────────────────────────────────────────────────────");
-
-           
-            System.out.println("\n📝 El recibo ha sido almacenado en: " + downloadFolder);
-
+            System.out.println("            el recibo se almaceno en : " + downloadFolder);
         } catch (IOException e) {
-            System.err.println("⚠️ Error al generar el recibo: " + e.getMessage());
+            System.err.println("                    error de sistema 404 : " + e.getMessage());
         }
     }
 
